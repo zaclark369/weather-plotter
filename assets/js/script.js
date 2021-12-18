@@ -70,17 +70,134 @@ const retrieveWeather = (apiUrl) => {
             )
             .then((response) => response.json())
             .then((data) => {
-                if (document.getElementById('current-day')) {
-                    document.getElementById('current-day').remove();
+                if (document.getElementById('today')) {
+                    document.getElementById('today').remove();
                 }
 
                 const currentDate = new Date(data.current.dt *1000);
                 const month = currentDate.getMonth() + 1;
             const day = currentDate.getDate();
             const year = currentDate.getFullYear();
-            const currentDayEl = document.createElement('section');
-            })
-        }
+            const todayEl = document.createElement('section');
+                todayEl.classList.add('container', 'col-12', 'col-md-12');
+                todayEl.id = 'today';
+                const dayContainer = document.createElement('div');
+                dayContainer.classList.add('row');
 
-    };
+                const dateEl = document.createElement('h2');
+                dateEl.textContent = '${month}/${day}/${year}';
+                todayEl.appendChild(dateEl);
+                document.getElementById('first-row').appendChild(todayEl);
+                
+                const locationEl = document.createElement('h2');
+                locationEl.textContent = cityEl;
+                
+                const localWeatherEl = document.createElement('h3');
+                localWeatherEl.textContent = data.current.weather[0].description;
+                localWeatherEl.classList.add('col-4');
+
+                const weatherImage = document.createElement('img');
+                weatherImage.src = `http://openweathermap.org/img/wn/${data.current.weather[0].icon}@2x.png`;
+                weatherImage.classList.add('bg-light', 'col-2', 'float-end');
+
+                dayContainer.appendChild(locationEl);
+                dayContainer.appendChild(localWeatherEl);
+                dayContainer.appendChild(weatherImage);
+
+                const todayTemperatureEl = document.createElement('h4');
+                todayTemperatureEl.textContent = `Temperature (Fahrenheit): ${data.current.temp}`;
+                const todayWindEl = document.createElement('h4');
+               todayWindEl.textContent = `Wind: ${data.current.wind_speed}mph`;
+                const todayHumidityEl = document.createElement('h4');
+                todayHumidityEl.textContent = `Humidity: ${data.current.humidity}`;
+
+                const ultravioletEl = document.createElement('h4');
+                ultravioletEl.textContent = `UV Index: ${data.current.uvi}`;
+            ultravioletEl.classList.add('rounded', 'border', 'border-1');
+            ultravioletEl.style.width = 'fit-content';
+            ultravioletEl.style.padding = '15px';
+            if (data.current.uvi > 2) {
+              ultravioletEl.classList.add('bg-warning');
+            }
+            if (data.current.uvi > 5) {
+              ultravioletEl.classList.add('bg-danger');
+            } else {
+              ultravioletEl.classList.add('bg-success');
+            }
+
+            todayEl.appendChild(dayContainer);
+            todayEl.appendChild(todayTemperatureEl);
+            todayEl.appendChild(todayWindEl);
+            todayEl.appendChild(todayHumidityEl);
+            todayEl.appendChild(ultravioletEl);
+
+            const forecastHandle =  (data) => {
+                if (document.getElementById('forecast-container')) {
+                    document.getElementById('forecast-container').remove();
+                }
+                const forecastContainerEl = document.createElement('div');
+                forecastContainerEl.classList.add('container-fluid');
+              forecastContainerEl.id = 'forecast-container';
+              const forecastRowEl = document.createElement('div');
+              forecastRowEl.classList.add('row');
+
+              const forecastArray = [];
+              for (let i = 0; i < 4; i++) {
+                  forecastArray.push(data.daily[i]);
+              }
+
+              const createCards = (forecast) => {
+                  if (!forecast.length) {
+                      return;
+                  }
+                  const day = forecast.shift();
+                  const date = new Date(day.dt * 1000);
+                const dateEl = document.createElement('h3');
+                dateEl.textContent = `${
+                  date.getMonth() + 1
+                }/${date.getDate()}/${date.getFullYear()}`;
+
+                forecastContainerEl.appendChild(forecastRowEl);
+                mainEl.appendChild(forecastContainerEl);
+
+
+                const cardColumn = document.createElement('div');
+                cardColumn.classList.add('col-12');
+                const cardEl = document.createElement('div');
+                cardEl.classList.add('card', 'bg-dark', 'border');
+                const cardImg = document.createElement('img');
+                cardImg.classList.add('card-img-top');
+                cardImg.src = `http://openweathermap.org/img/wn/${day.weather[0].icon}@2x.png`;
+                cardImg.style.width = '50%';
+                const cardBody = document.createElement('div');
+                cardBody.classList.add('card-body');
+                const cardTemp = document.createElement('h5');
+                cardTemp.classList.add('fs-5');
+                cardTemp.textContent = `Temp: ${day.temp.day} deg`;
+                const cardWind = document.createElement('h5');
+                cardWind.classList.add('fs-5');
+                cardWind.textContent = `Wind: ${day.wind_speed}mph`;
+                const cardHumidity = document.createElement('h5');
+                cardHumidity.classList.add('fs-5');
+                cardHumidity.textContent = `Humidity: ${day.humidity}`;
+
+                cardEl.appendChild(cardImg);
+                cardEl.appendChild(cardBody);
+                cardBody.appendChild(dateEl);
+                cardBody.appendChild(cardTemp);
+                cardBody.appendChild(cardWind);
+                cardBody.appendChild(cardHumidity);
+                forecastRowEl.appendChild(cardColumn);
+                cardColumn.appendChild(cardEl);
+
+                createForecast(forecast);
+            };
+            createForecast(forecastArray);
+              };
+              createForecast(data);
+            });
+        };
+        onecall(data);
+    });
 };
+

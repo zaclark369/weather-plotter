@@ -1,7 +1,7 @@
 const searchEl = document.getElementById("main");
 const navEl = document.getElementById("navigation");
 const apiKey = "e50a47ec15988784ce45ae496cc6fe45";
-let cityEl = "";
+let cityEl = '';
 const searchBtn = document.getElementById("searchbtn");
 
 const retrieveWeather = (apiUrl) => {
@@ -54,7 +54,8 @@ const retrieveWeather = (apiUrl) => {
 
       updateLocalStorage();
       handleStorage();
-      // cityEl = data.name;
+      
+      cityEl = data.name;
 
       if (document.getElementById("error-msg")) {
         const errorArray = Array.from(document.querySelectorAll("#error-msg"));
@@ -67,8 +68,8 @@ const retrieveWeather = (apiUrl) => {
         )
           .then((response) => response.json())
           .then((data) => {
-            if (document.getElementById("today")) {
-              document.getElementById("today").remove();
+            if (document.getElementById("current-day")) {
+              document.getElementById("current-day").remove();
             }
 
             const currentDate = new Date(data.current.dt * 1000);
@@ -76,13 +77,13 @@ const retrieveWeather = (apiUrl) => {
             const day = currentDate.getDate();
             const year = currentDate.getFullYear();
             const todayEl = document.createElement("section");
-            todayEl.classList.add("container", "col-12", "col-md-12");
-            todayEl.id = "today";
+            todayEl.classList.add("container", 'border', "col-12", "col-md-12");
+            todayEl.id = "current-day";
             const dayContainer = document.createElement("div");
             dayContainer.classList.add("row");
 
             const dateEl = document.createElement("h2");
-            dateEl.textContent = "${month}/${day}/${year}";
+            dateEl.textContent = `${month}/${day}/${year}`;
             todayEl.appendChild(dateEl);
             document.getElementById("first-row").appendChild(todayEl);
 
@@ -95,7 +96,7 @@ const retrieveWeather = (apiUrl) => {
 
             const weatherImage = document.createElement("img");
             weatherImage.src = `http://openweathermap.org/img/wn/${data.current.weather[0].icon}@2x.png`;
-            weatherImage.classList.add("bg-light", "col-2", "float-end");
+            weatherImage.classList.add("bg-dark", "col-2", "float");
 
             dayContainer.appendChild(locationEl);
             dayContainer.appendChild(localWeatherEl);
@@ -132,7 +133,7 @@ const retrieveWeather = (apiUrl) => {
               if (document.getElementById("forecast-container")) {
                 document.getElementById("forecast-container").remove();
               }
-              const forecastContainerEl = document.createElement("div");
+              const forecastContainerEl = document.createElement("section");
               forecastContainerEl.classList.add("container-fluid");
               forecastContainerEl.id = "forecast-container";
               const forecastRowEl = document.createElement("div");
@@ -164,7 +165,7 @@ const retrieveWeather = (apiUrl) => {
                 const cardImg = document.createElement("img");
                 cardImg.classList.add("card-img-top");
                 cardImg.src = `http://openweathermap.org/img/wn/${day.weather[0].icon}@2x.png`;
-                cardImg.style.width = "50%";
+                cardImg.style.width = "70%";
                 const cardBody = document.createElement("div");
                 cardBody.classList.add("card-body");
                 const cardTemp = document.createElement("h5");

@@ -201,3 +201,46 @@ const retrieveWeather = (apiUrl) => {
     });
 };
 
+function handleClick() {
+    const inputEl = document.getElementById('search-city');
+  cityEl = inputEl.value;
+  const weatherApi = `https://api.openweathermap.org/data/2.5/weather?q=${cityEl}&units=imperial&appid=${apiKey}`;
+  fetchWeather(weatherApi);
+}
+
+function keyFunction(event) {
+    if (event.keyCode === 13) {
+      const inputEl = document.getElementById('search-city');
+      userCity = inputEl.value;
+      const weatherApi = `https://api.openweathermap.org/data/2.5/weather?q=${cityEl}&units=imperial&appid=${apiKey}`;
+      fetchWeather(weatherApi);
+    }
+  }
+
+  searchBtn.onclick(handleClick);
+  document.getElementById('search-city').addEventListener('keyup', keyFunction);
+
+  const handleStorage = () => {
+      if (localStorage.getItem('search-history')) {
+          const searchItems = Array.from(document.querySelectorAll('.search-item'));
+          searchItems.forEach((item) => {
+              item.remove();
+          });
+
+          const historyEl = JSON.parse(localStorage.getItem('search-history'));
+          historyEl.forEach(function (item) {
+              const headerEl = document.createElement('h1');
+              headerEl.classList.add('bg-primary', 'text-center', "search-item");
+              headerEl.style = 'padding: 7px';
+              headerEl.textContent = item.title;
+              navEl.appendChild(headerEl);
+              headerEl.addEventListener('click', (event) => {
+                  cityEl = event.target.textContent;
+                  const weatherAPI= `https://api.openweathermap.org/data/2.5/weather?q=${cityEl}&units=imperial&appid=${apiKey}`;
+                  fetchWeather(weatherAPI);
+              });
+          });
+      }
+  };
+
+  handleStorage();
